@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sbs.untactTeacher.dto.Article;
+import com.sbs.untactTeacher.util.Util;
 
 @Controller
 public class UsrArticleController {
@@ -40,7 +41,9 @@ public class UsrArticleController {
 
 	@RequestMapping("/usr/article/doAdd")
 	@ResponseBody
-	public Map<String, Object> doAdd(String regDate, String title, String body) {
+	public Map<String, Object> doAdd(String title, String body) {
+		String regDate = Util.getNowDateStr();
+
 		articles.add(new Article(++articlesLastId, regDate, title, body));
 
 		Map<String, Object> rs = new HashMap<>();
@@ -81,27 +84,27 @@ public class UsrArticleController {
 
 		return false;
 	}
-	
+
 	@RequestMapping("/usr/article/doModify")
 	@ResponseBody
 	public Map<String, Object> doModify(int id, String title, String body) {
 		Article selArticle = null;
-		
-		for ( Article article : articles ) {
-			if ( article.getId() == id ) {
+
+		for (Article article : articles) {
+			if (article.getId() == id) {
 				selArticle = article;
 				break;
 			}
 		}
-		
+
 		Map<String, Object> rs = new HashMap<>();
-		
+
 		if (selArticle == null) {
 			rs.put("resultCode", "F-1");
 			rs.put("msg", String.format("%d번 게시물은 존재하지 않습니다.", id));
 			return rs;
 		}
-		
+
 		selArticle.setTitle(title);
 		selArticle.setBody(body);
 
@@ -112,9 +115,3 @@ public class UsrArticleController {
 		return rs;
 	}
 }
-
-
-
-
-
-
