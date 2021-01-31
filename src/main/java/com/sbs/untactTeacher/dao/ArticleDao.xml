@@ -21,12 +21,13 @@
 		ORDER BY id DESC
 	</select>
 
-	<insert id="addArticle">
+	<insert id="addArticle" useGeneratedKeys="true" keyProperty="id">
 		INSERT INTO article
 		SET regDate = NOW(),
 		updateDate =
 		NOW(),
-		title = #{title},
+		title =
+		#{title},
 		`body` = #{body}
 	</insert>
 
