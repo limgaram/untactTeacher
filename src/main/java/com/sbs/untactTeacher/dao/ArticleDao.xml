@@ -11,9 +11,6 @@
 		= #{id}
 	</select>
 
-	<!-- public List<Article> getArticles(@Param(value = "searchKeywordType") 
-		String searchKeywordType, @Param(value = "searchKeyword") String searchKeyword); -->
-
 	<select id="getArticles" resultType="Article">
 		SELECT *
 		FROM article
