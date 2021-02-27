@@ -43,7 +43,7 @@ public class BeforeActionInterceptor implements HandlerInterceptor {
 				loginedMember = memberService.getMember(loginedMemberId);
 			}
 		}
-
+		
 		// 로그인 여부에 관련된 정보를 request에 담는다.
 		boolean isLogined = false;
 		boolean isAdmin = false;
