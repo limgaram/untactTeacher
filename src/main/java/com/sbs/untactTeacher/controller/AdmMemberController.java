@@ -20,12 +20,11 @@ import com.sbs.untactTeacher.util.Util;
 public class AdmMemberController {
 	@Autowired
 	private MemberService memberService;
-	
+
 	@RequestMapping("/adm/member/login")
 	public String login() {
 		return "adm/member/login";
 	}
-	
 
 	@RequestMapping("/adm/member/doLogin")
 	@ResponseBody
@@ -56,9 +55,7 @@ public class AdmMemberController {
 		
 		String msg = String.format("%s님 환영합니다.", existingMember.getNickname());
 		
-		if ( redirectUrl == null ) {
-			redirectUrl = "../home/main";
-		}
+		redirectUrl = Util.ifEmpty(redirectUrl, "../home/main");
 		
 		return Util.msgAndReplace(msg, redirectUrl);
 	}
@@ -75,7 +72,7 @@ public class AdmMemberController {
 
 		return memberService.modifyMember(param);
 	}
-	
+
 	@RequestMapping("/adm/member/doLogout")
 	@ResponseBody
 	public String doLogout(HttpSession session) {
