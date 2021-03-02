@@ -15,10 +15,10 @@ import org.springframework.web.multipart.MultipartRequest;
 
 import com.sbs.untactTeacher.dto.Article;
 import com.sbs.untactTeacher.dto.Board;
+import com.sbs.untactTeacher.dto.GenFile;
 import com.sbs.untactTeacher.dto.ResultData;
 import com.sbs.untactTeacher.service.ArticleService;
 import com.sbs.untactTeacher.service.GenFileService;
-import com.sbs.untactTeacher.util.Util;
 
 @Controller
 public class AdmArticleController extends BaseController {
@@ -77,6 +77,15 @@ public class AdmArticleController extends BaseController {
 
 		List<Article> articles = articleService.getForPrintArticles(boardId, searchKeywordType, searchKeyword, page,
 				itemsInAPage);
+		
+		for ( Article article : articles ) {
+			GenFile genFile = genFileService.getGenFile("article", article.getId(), "common", "attachment", 1);
+			
+			if ( genFile != null ) {
+				article.setExtra__thumbImg(genFile.getForPrintUrl());
+			}
+		}
+		
 		req.setAttribute("articles", articles);
 
 		return "adm/article/list";
