@@ -91,6 +91,11 @@ public class AdmArticleController extends BaseController {
 
 		return articleService.addReply(param);
 	}
+	
+	@RequestMapping("/adm/article/add")
+	public String showAdd(@RequestParam Map<String, Object> param, HttpServletRequest req) {
+		return "adm/article/add";
+	}
 
 	@RequestMapping("/adm/article/doAdd")
 	@ResponseBody
