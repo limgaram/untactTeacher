@@ -1,7 +1,9 @@
 package com.sbs.untactTeacher.service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,8 @@ import com.sbs.untactTeacher.util.Util;
 @Service
 public class ArticleService {
 	@Autowired
+	private GenFileService genFileService;
+	@Autowired
 	private ArticleDao articleDao;
 	@Autowired
 	private MemberService memberService;
@@ -27,6 +31,18 @@ public class ArticleService {
 		articleDao.addArticle(param);
 
 		int id = Util.getAsInt(param.get("id"), 0);
+		
+		String genFileIdsStr = Util.ifEmpty((String)param.get("genFileIdsStr"), null);
+		
+		if ( genFileIdsStr != null ) {
+			List<Integer> genFileIds = Util.getListDividedBy(genFileIdsStr, ",");
+
+			// 파일이 먼저 생성된 후에, 관련 데이터가 생성되는 경우에는, file의 relId가 일단 0으로 저장된다.
+			// 그것을 뒤늦게라도 이렇게 고처야 한다.
+			for (int genFileId : genFileIds) {
+				genFileService.changeRelId(genFileId, id);
+			}
+		}
 
 		return new ResultData("S-1", "성공하였습니다.", "id", id);
 	}
