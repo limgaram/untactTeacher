@@ -17,8 +17,7 @@ public interface ArticleDao {
 
 	void deleteArticle(@Param("id") int id);
 
-	void modifyArticle(@Param("id") int id, @Param(value = "title") String title,
-			@Param(value = "body") String body);
+	void modifyArticle(Map<String, Object> param);
 
 	List<Article> getArticles(@Param("searchKeywordType") String searchKeywordType,
 			@Param("searchKeyword") String searchKeyword);

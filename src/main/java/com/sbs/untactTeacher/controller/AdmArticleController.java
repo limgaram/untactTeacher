@@ -20,6 +20,7 @@ import com.sbs.untactTeacher.dto.GenFile;
 import com.sbs.untactTeacher.dto.ResultData;
 import com.sbs.untactTeacher.service.ArticleService;
 import com.sbs.untactTeacher.service.GenFileService;
+import com.sbs.untactTeacher.util.Util;
 
 @Controller
 public class AdmArticleController extends BaseController {
@@ -49,7 +50,7 @@ public class AdmArticleController extends BaseController {
 			String searchKeywordType, String searchKeyword, @RequestParam(defaultValue = "1") int page) {
 
 		Board board = articleService.getBoard(boardId);
-		
+
 		req.setAttribute("board", board);
 
 		if (board == null) {
@@ -80,15 +81,15 @@ public class AdmArticleController extends BaseController {
 
 		List<Article> articles = articleService.getForPrintArticles(boardId, searchKeywordType, searchKeyword, page,
 				itemsInAPage);
-		
-		for ( Article article : articles ) {
+
+		for (Article article : articles) {
 			GenFile genFile = genFileService.getGenFile("article", article.getId(), "common", "attachment", 1);
-			
-			if ( genFile != null ) {
+
+			if (genFile != null) {
 				article.setExtra__thumbImg(genFile.getForPrintUrl());
 			}
 		}
-		
+
 		req.setAttribute("articles", articles);
 
 		return "adm/article/list";
@@ -140,13 +141,14 @@ public class AdmArticleController extends BaseController {
 
 		for (String fileInputName : fileMap.keySet()) {
 			MultipartFile multipartFile = fileMap.get(fileInputName);
-			
-			if ( multipartFile.isEmpty() == false ) {
-				genFileService.save(multipartFile, newArticleId);				
+
+			if (multipartFile.isEmpty() == false) {
+				genFileService.save(multipartFile, newArticleId);
 			}
 		}
 
-		return msgAndReplace(req, String.format("%d번 게시물이 작성되었습니다.", newArticleId), "../article/detail?id=" + newArticleId);
+		return msgAndReplace(req, String.format("%d번 게시물이 작성되었습니다.", newArticleId),
+				"../article/detail?id=" + newArticleId);
 	}
 
 	@RequestMapping("/adm/article/doDelete")
@@ -172,7 +174,7 @@ public class AdmArticleController extends BaseController {
 
 		return articleService.deleteArticle(id);
 	}
-	
+
 	@RequestMapping("/adm/article/modify")
 	public String showModify(Integer id, HttpServletRequest req) {
 		if (id == null) {
@@ -180,7 +182,7 @@ public class AdmArticleController extends BaseController {
 		}
 
 		Article article = articleService.getForPrintArticle(id);
-		
+
 		List<GenFile> files = genFileService.getGenFiles("article", article.getId(), "common", "attachment");
 
 		Map<String, GenFile> filesMap = new HashMap<>();
@@ -188,31 +190,33 @@ public class AdmArticleController extends BaseController {
 		for (GenFile file : files) {
 			filesMap.put(file.getFileNo() + "", file);
 		}
-		
+
 		article.getExtraNotNull().put("file__common__attachment", filesMap);
 		req.setAttribute("article", article);
 
 		if (article == null) {
 			return msgAndBack(req, "존재하지 않는 게시물번호 입니다.");
 		}
-		
+
 		return "adm/article/modify";
 	}
 
 	@RequestMapping("/adm/article/doModify")
 	@ResponseBody
-	public ResultData doModify(Integer id, String title, String body, HttpServletRequest req) {
+	public ResultData doModify(@RequestParam Map<String, Object> param, HttpServletRequest req) {
 		int loginedMemberId = (int) req.getAttribute("loginedMemberId");
+		
+		int id = Util.getAsInt(param.get("id"), 0);
 
-		if (id == null) {
+		if ( id == 0 ) {
 			return new ResultData("F-1", "id를 입력해주세요.");
 		}
 
-		if (title == null) {
+		if ( Util.isEmpty(param.get("title")) ) {
 			return new ResultData("F-1", "title을 입력해주세요.");
 		}
 
-		if (body == null) {
+		if ( Util.isEmpty(param.get("body")) ) {
 			return new ResultData("F-1", "body를 입력해주세요.");
 		}
 
@@ -228,6 +232,6 @@ public class AdmArticleController extends BaseController {
 			return actorCanModifyRd;
 		}
 
-		return articleService.modifyArticle(id, title, body);
+		return articleService.modifyArticle(param);
 	}
 }
