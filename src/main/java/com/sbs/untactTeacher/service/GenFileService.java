@@ -73,6 +73,14 @@ public class GenFileService {
 
 		String fileDir = Util.getNowYearMonthDateStr();
 
+		if (relId > 0) {
+			GenFile oldGenFile = getGenFile(relTypeCode, relId, typeCode, type2Code, fileNo);
+
+			if (oldGenFile != null) {
+				deleteGenFile(oldGenFile);
+			}
+		}
+
 		ResultData saveMetaRd = saveMeta(relTypeCode, relId, typeCode, type2Code, fileNo, originFileName,
 				fileExtTypeCode, fileExtType2Code, fileExt, fileSize, fileDir);
 		int newGenFileId = (int) saveMetaRd.getBody().get("id");
@@ -99,18 +107,18 @@ public class GenFileService {
 		return new ResultData("S-1", "파일이 생성되었습니다.", "id", newGenFileId, "fileRealPath", targetFilePath, "fileName",
 				targetFileName, "fileInputName", fileInputName);
 	}
-	
+
 	public List<GenFile> getGenFiles(String relTypeCode, int relId, String typeCode, String type2Code) {
 		return genFileDao.getGenFiles(relTypeCode, relId, typeCode, type2Code);
 	}
-	
+
 	public GenFile getGenFile(String relTypeCode, int relId, String typeCode, String type2Code, int fileNo) {
 		return genFileDao.getGenFile(relTypeCode, relId, typeCode, type2Code, fileNo);
 	}
 
 	public ResultData saveFiles(MultipartRequest multipartRequest) {
 		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
-		
+
 		Map<String, ResultData> filesResultData = new HashMap<>();
 		List<Integer> genFileIds = new ArrayList<>();
 
@@ -125,7 +133,7 @@ public class GenFileService {
 				filesResultData.put(fileInputName, fileResultData);
 			}
 		}
-		
+
 		String genFileIdsStr = Joiner.on(",").join(genFileIds);
 
 		return new ResultData("S-1", "파일을 업로드하였습니다.", "filesResultData", filesResultData, "genFileIdsStr",
@@ -136,18 +144,18 @@ public class GenFileService {
 		genFileDao.changeRelId(id, relId);
 	}
 
-	public void deleteFiles(String relTypeCode, int relId) {
+	public void deleteGenFiles(String relTypeCode, int relId) {
 		List<GenFile> genFiles = genFileDao.getGenFiles(relTypeCode, relId);
-		
-		for ( GenFile genFile : genFiles ) {
-			deleteFile(genFile);
+
+		for (GenFile genFile : genFiles) {
+			deleteGenFile(genFile);
 		}
 	}
 
-	private void deleteFile(GenFile genFile) {
+	private void deleteGenFile(GenFile genFile) {
 		String filePath = genFile.getFilePath(genFileDirPath);
 		Util.delteFile(filePath);
-		
+
 		genFileDao.deleteFile(genFile.getId());
 	}
 }
