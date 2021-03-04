@@ -8,6 +8,7 @@
 <c:set var="fileInputMaxCount" value="10" />
 <script>
 ArticleModify__fileInputMaxCount = parseInt("${fileInputMaxCount}");
+const articleId = parseInt("${article.id}");
 </script>
 
 <script>
@@ -40,7 +41,7 @@ function ArticleModify__checkAndSubmit(form) {
 	var maxSize = maxSizeMb * 1024 * 1024;
 
 	for ( let inputNo = 1; inputNo <= ArticleModify__fileInputMaxCount; inputNo++ ) {
-		const input = form["file__article__0__common__attachment__" + inputNo];
+		const input = form["file__article__" + articleId + "__common__attachment__" + inputNo];
 		
 		if (input.value) {
 			if (input.files[0].size > maxSize) {
@@ -58,7 +59,7 @@ function ArticleModify__checkAndSubmit(form) {
 		}
 		
 		for ( let inputNo = 1; inputNo <= ArticleModify__fileInputMaxCount; inputNo++ ) {
-			const input = form["file__article__0__common__attachment__" + inputNo];
+			const input = form["file__article__" + articleId + "__common__attachment__" + inputNo];
 			input.value = '';
 		}
 		
@@ -69,7 +70,7 @@ function ArticleModify__checkAndSubmit(form) {
 		var needToUpload = false;
 
 		for ( let inputNo = 1; inputNo <= ArticleModify__fileInputMaxCount; inputNo++ ) {
-			const input = form["file__article__0__common__attachment__" + inputNo];
+			const input = form["file__article__" + articleId + "__common__attachment__" + inputNo];
 
 			if ( input.value.length > 0 ) {
 				needToUpload = true;
@@ -131,7 +132,7 @@ function ArticleModify__checkAndSubmit(form) {
 						<span>첨부파일 ${inputNo}</span>
 					</div>
 					<div class="lg:flex-grow">
-						<input type="file" name="file__article__0__common__attachment__${inputNo}"
+						<input type="file" name="file__article__${article.id}__common__attachment__${inputNo}"
 							class="form-row-input w-full rounded-sm" />
 						<c:if test="${file != null}">
 							<div>
