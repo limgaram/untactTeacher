@@ -11,6 +11,7 @@ import com.sbs.untactTeacher.dao.ArticleDao;
 import com.sbs.untactTeacher.dto.Article;
 import com.sbs.untactTeacher.dto.Board;
 import com.sbs.untactTeacher.dto.GenFile;
+import com.sbs.untactTeacher.dto.Member;
 import com.sbs.untactTeacher.dto.ResultData;
 import com.sbs.untactTeacher.util.Util;
 
@@ -31,7 +32,7 @@ public class ArticleService {
 		articleDao.addArticle(param);
 
 		int id = Util.getAsInt(param.get("id"), 0);
-		
+
 		changeInputFileRelIds(param, id);
 
 		return new ResultData("S-1", "성공하였습니다.", "id", id);
@@ -47,16 +48,16 @@ public class ArticleService {
 
 	public ResultData modifyArticle(Map<String, Object> param) {
 		articleDao.modifyArticle(param);
-		
+
 		int id = Util.getAsInt(param.get("id"), 0);
-		
+
 		return new ResultData("S-1", "게시물을 수정하였습니다.", "id", id);
 	}
 
 	private void changeInputFileRelIds(Map<String, Object> param, int id) {
-		String genFileIdsStr = Util.ifEmpty((String)param.get("genFileIdsStr"), null);
-		
-		if ( genFileIdsStr != null ) {
+		String genFileIdsStr = Util.ifEmpty((String) param.get("genFileIdsStr"), null);
+
+		if (genFileIdsStr != null) {
 			List<Integer> genFileIds = Util.getListDividedBy(genFileIdsStr, ",");
 
 			// 파일이 먼저 생성된 후에, 관련 데이터가 생성되는 경우에는, file의 relId가 일단 0으로 저장된다.
@@ -71,20 +72,20 @@ public class ArticleService {
 		return articleDao.getArticles(searchKeywordType, searchKeyword);
 	}
 
-	public ResultData getActorCanModifyRd(Article article, int actorId) {
-		if (article.getMemberId() == actorId) {
+	public ResultData getActorCanModifyRd(Article article, Member actor) {
+		if (article.getMemberId() == actor.getId()) {
 			return new ResultData("S-1", "가능합니다.");
 		}
 
-		if (memberService.isAdmin(actorId)) {
+		if (memberService.isAdmin(actor)) {
 			return new ResultData("S-2", "가능합니다.");
 		}
 
 		return new ResultData("F-1", "권한이 없습니다.");
 	}
 
-	public ResultData getActorCanDeleteRd(Article article, int actorId) {
-		return getActorCanModifyRd(article, actorId);
+	public ResultData getActorCanDeleteRd(Article article, Member actor) {
+		return getActorCanModifyRd(article, actor);
 	}
 
 	public Article getForPrintArticle(int id) {
@@ -93,14 +94,16 @@ public class ArticleService {
 
 	public List<Article> getForPrintArticles(int boardId, String searchKeywordType, String searchKeyword, int page,
 			int itemsInAPage) {
-		
+
 		int limitStart = (page - 1) * itemsInAPage;
 		int limitTake = itemsInAPage;
-		
-		List<Article> articles = articleDao.getForPrintArticles(boardId, searchKeywordType, searchKeyword, limitStart, limitTake);
+
+		List<Article> articles = articleDao.getForPrintArticles(boardId, searchKeywordType, searchKeyword, limitStart,
+				limitTake);
 		List<Integer> articleIds = articles.stream().map(article -> article.getId()).collect(Collectors.toList());
-		Map<Integer, Map<String, GenFile>> filesMap = genFileService.getFilesMapKeyRelIdAndFileNo("article", articleIds, "common", "attachment");
-		
+		Map<Integer, Map<String, GenFile>> filesMap = genFileService.getFilesMapKeyRelIdAndFileNo("article", articleIds,
+				"common", "attachment");
+
 		for (Article article : articles) {
 			Map<String, GenFile> mapByFileNo = filesMap.get(article.getId());
 
@@ -108,7 +111,7 @@ public class ArticleService {
 				article.getExtraNotNull().put("file__common__attachment", mapByFileNo);
 			}
 		}
-		
+
 		return articles;
 	}
 
@@ -123,4 +126,5 @@ public class ArticleService {
 
 		return new ResultData("S-1", "성공하였습니다.", "id", id);
 	}
+
 }

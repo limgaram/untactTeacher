@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sbs.untactTeacher.dto.Article;
+import com.sbs.untactTeacher.dto.Member;
 import com.sbs.untactTeacher.dto.Reply;
 import com.sbs.untactTeacher.dto.ResultData;
 import com.sbs.untactTeacher.service.ArticleService;
@@ -25,7 +26,7 @@ public class UsrReplyController {
 	@RequestMapping("/usr/reply/list")
 	@ResponseBody
 	public ResultData showList(String relTypeCode, Integer relId) {
-		
+
 		if (relTypeCode == null) {
 			return new ResultData("F-1", "relTypeCode를 입력해주세요.");
 		}
@@ -50,7 +51,7 @@ public class UsrReplyController {
 	@RequestMapping("/usr/reply/doDelete")
 	@ResponseBody
 	public ResultData doDelete(Integer id, HttpServletRequest req) {
-		int loginedMemberId = (int) req.getAttribute("loginedMemberId");
+		Member loginedMember = (Member) req.getAttribute("loginedMember");
 
 		if (id == null) {
 			return new ResultData("F-1", "id를 입력해주세요.");
@@ -62,7 +63,7 @@ public class UsrReplyController {
 			return new ResultData("F-1", "해당 댓글은 존재하지 않습니다.");
 		}
 
-		ResultData actorCanDeleteRd = replyService.getActorCanDeleteRd(reply, loginedMemberId);
+		ResultData actorCanDeleteRd = replyService.getActorCanDeleteRd(reply, loginedMember);
 
 		if (actorCanDeleteRd.isFail()) {
 			return actorCanDeleteRd;
@@ -70,11 +71,11 @@ public class UsrReplyController {
 
 		return replyService.deleteReply(id);
 	}
-	
+
 	@RequestMapping("/usr/reply/doModify")
 	@ResponseBody
 	public ResultData doModify(Integer id, String body, HttpServletRequest req) {
-		int loginedMemberId = (int)req.getAttribute("loginedMemberId");
+		Member loginedMember = (Member) req.getAttribute("loginedMember");
 
 		if (id == null) {
 			return new ResultData("F-1", "id를 입력해주세요.");
@@ -90,7 +91,7 @@ public class UsrReplyController {
 			return new ResultData("F-1", "해당 댓글은 존재하지 않습니다.");
 		}
 
-		ResultData actorCanModifyRd = replyService.getActorCanModifyRd(reply, loginedMemberId);
+		ResultData actorCanModifyRd = replyService.getActorCanModifyRd(reply, loginedMember);
 
 		if (actorCanModifyRd.isFail()) {
 			return actorCanModifyRd;

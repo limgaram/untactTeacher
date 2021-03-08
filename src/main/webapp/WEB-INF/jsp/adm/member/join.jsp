@@ -83,8 +83,7 @@
 	}
 </script>
 <section class="section-login">
-	<div
-		class="container mx-auto min-h-screen flex items-center justify-center">
+	<div class="container mx-auto min-h-screen flex items-center justify-center">
 		<div class="w-full">
 			<div class="logo-bar flex justify-center mt-3">
 				<a href="#" class="logo">

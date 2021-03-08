@@ -1,5 +1,6 @@
 package com.sbs.untactTeacher.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,21 +12,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.sbs.untactTeacher.dto.Board;
 import com.sbs.untactTeacher.dto.Member;
 import com.sbs.untactTeacher.dto.ResultData;
 import com.sbs.untactTeacher.service.MemberService;
 import com.sbs.untactTeacher.util.Util;
 
 @Controller
-public class AdmMemberController {
+public class AdmMemberController extends BaseController {
 	@Autowired
 	private MemberService memberService;
-	
+
 	@RequestMapping("/adm/member/join")
 	public String showJoin() {
 		return "adm/member/join";
 	}
-	
+
 	@RequestMapping("/adm/member/doJoin")
 	@ResponseBody
 	public String doJoin(@RequestParam Map<String, Object> param) {
@@ -33,7 +35,7 @@ public class AdmMemberController {
 			return Util.msgAndBack("loginId를 입력해주세요.");
 		}
 
-		Member existingMember = memberService.getMemberByLoginId((String)param.get("loginId"));
+		Member existingMember = memberService.getMemberByLoginId((String) param.get("loginId"));
 
 		if (existingMember != null) {
 			return Util.msgAndBack("이미 사용중인 로그인아이디 입니다.");
@@ -42,29 +44,29 @@ public class AdmMemberController {
 		if (param.get("loginPw") == null) {
 			return Util.msgAndBack("loginPw를 입력해주세요.");
 		}
-		
+
 		if (param.get("name") == null) {
 			return Util.msgAndBack("name을 입력해주세요.");
 		}
-		
+
 		if (param.get("nickname") == null) {
 			return Util.msgAndBack("nickname을 입력해주세요.");
 		}
-		
+
 		if (param.get("email") == null) {
 			return Util.msgAndBack("email을 입력해주세요.");
 		}
-		
+
 		if (param.get("cellphoneNo") == null) {
 			return Util.msgAndBack("cellphoneNo를 입력해주세요.");
 		}
-		
+
 		memberService.join(param);
-		
+
 		String msg = String.format("%s님 환영합니다.", param.get("nickname"));
-		
-		String redirectUrl = Util.ifEmpty((String)param.get("redirectUrl"), "../member/login");
-		
+
+		String redirectUrl = Util.ifEmpty((String) param.get("redirectUrl"), "../member/login");
+
 		return Util.msgAndReplace(msg, redirectUrl);
 	}
 
@@ -93,17 +95,17 @@ public class AdmMemberController {
 		if (existingMember.getLoginPw().equals(loginPw) == false) {
 			return Util.msgAndBack("비밀번호가 일치하지 않습니다.");
 		}
-		
-		if ( memberService.isAdmin(existingMember) == false ) {
+
+		if (memberService.isAdmin(existingMember) == false) {
 			return Util.msgAndBack("관리자만 접근할 수 있는 페이지 입니다.");
 		}
 
 		session.setAttribute("loginedMemberId", existingMember.getId());
-		
+
 		String msg = String.format("%s님 환영합니다.", existingMember.getNickname());
-		
+
 		redirectUrl = Util.ifEmpty(redirectUrl, "../home/main");
-		
+
 		return Util.msgAndReplace(msg, redirectUrl);
 	}
 
@@ -126,5 +128,47 @@ public class AdmMemberController {
 		session.removeAttribute("loginedMemberId");
 
 		return Util.msgAndReplace("로그아웃 되었습니다.", "../member/login");
+	}
+
+	@RequestMapping("/adm/member/list")
+	public String showList(HttpServletRequest req, @RequestParam(defaultValue = "1") int boardId,
+			String searchKeywordType, String searchKeyword, @RequestParam(defaultValue = "1") int page) {
+
+		Board board = memberService.getBoard(boardId);
+
+		req.setAttribute("board", board);
+
+		if (board == null) {
+			return msgAndBack(req, "존재하지 않는 게시판 입니다.");
+		}
+
+		if (searchKeywordType != null) {
+			searchKeywordType = searchKeywordType.trim();
+		}
+
+		if (searchKeywordType == null || searchKeywordType.length() == 0) {
+			searchKeywordType = "titleAndBody";
+		}
+
+		if (searchKeyword != null && searchKeyword.length() == 0) {
+			searchKeyword = null;
+		}
+
+		if (searchKeyword != null) {
+			searchKeyword = searchKeyword.trim();
+		}
+
+		if (searchKeyword == null) {
+			searchKeywordType = null;
+		}
+
+		int itemsInAPage = 20;
+
+		List<Member> members = memberService.getForPrintMembers(boardId, searchKeywordType, searchKeyword, page,
+				itemsInAPage);
+
+		req.setAttribute("members", members);
+
+		return "adm/member/list";
 	}
 }
