@@ -6,67 +6,77 @@
 
 <!-- memberList -->
 
-<script>
-	param.boardId = parseInt("${board.id}");
-</script>
-
 <section class="section-1">
 	<div class="bg-white shadow-md rounded container mx-auto p-8 mt-8">
-		<div class="flex items-center">
-			<select class="py-2 select-board-id">
-				<option value="1">공지사항</option>
-				<option value="2">자유게시판</option>
+		<!-- select section -->
+		<div class="flex">
+			<select class="py-2 select-auth-level">
+				<option value="">권한전체</option>
+				<option value="3">일반회원</option>
+				<option value="7">관리자</option>
 			</select>
 			<script>
-				$('.section-1 .select-board-id').val(param.boardId);
+				if (!param.authLevel) {
+					param.authLevel = '';
+				}
 
-				$('.section-1 .select-board-id').change(function() {
-					location.href = '?boardId=' + this.value;
+				$('.section-1 .select-auth-level').val(param.authLevel);
+
+				$('section-1 .select-auth-level').change(function() {
+					location.href = '?authLevel=' + this.value;
 				});
 			</script>
-
-			<div class="flex-grow"></div>
-
-			<a href="add?boardId=${board.id}"
-				class="btn-primary bg-blue-500 hover:bg-blue-dark text-white font-bold py-2 px-4 rounded">글쓰기</a>
 		</div>
 		<div>
-			<c:forEach items="${articles}" var="article">
-				<c:set var="detailUrl" value="detail?id=${article.id}" />
-				<c:set var="thumbFileNo" value="${String.valueOf(1)}" />
-				<c:set var="thumbFile" value="${article.extra.file__common__attachment[thumbFileNo]}" />
-				<c:set var="thumbUrl" value="${thumbFile.getForPrintUrl()}" />
+			<c:forEach items="${members}" var="member">
+				<c:set var="detailUrl" value="detail?id=${member.id}" />
 				<div class="flex items-center mt-10">
-					<a href="${detailUrl}" class="font-bold">NO. ${article.id}</a>
-					<a href="${detailUrl}" class="ml-2 font-light text-gray-600">${article.regDate}</a>
+					<!-- 회원 번호와 등록날짜 -->
+					<a href="${detailUrl}" class="font-bold">NO. ${member.id}</a> <a
+						href="${detailUrl}" class="ml-2 font-light text-gray-600">${member.regDate}</a>
+					<!-- 공백주기 -->
 					<div class="flex-grow"></div>
-					<a href="list?boardId=${article.boardId}"
-						class="px-2 py-1 bg-gray-600 text-gray-100 font-bold rounded hover:bg-gray-500">${article.extra__boardName}</a>
+					<a href="?authLevel=${member.authLevel}"
+						class="cursor-pointer px-2 py-1 bg-${member.authLevelNameColor}-600 text-${member.authLevelNameColor}-100 font-bold rounded hover:bg-${member.authLevelNameColor}-500">${member.authLevelName}</a>
 				</div>
+
+				<!-- 로그인 정보 section -->
 				<div class="mt-2">
-					<a href="${detailUrl}"
-						class="text-2xl text-gray-700 font-bold hover:underline">${article.title}</a>
-					<c:if test="${thumbUrl != null}">
-						<a class="block" href="${detailUrl}" >
-							<img class="max-w-sm" src="${thumbUrl}" alt="" />
-						</a>
-					</c:if>
-					<a href="${detailUrl}" class="mt-2 text-gray-600 block">${article.body}</a>
+					<a href="${detailUrl}" class="mt-2 text-gray-600 block"> <span
+						class="inline-flex justify-center items-center px-2 rounded-full bg-green-500 text-white">로그인
+							아이디</span> <span>${member.loginId}</span>
+					</a> <a href="${detailUrl}" class="mt-2 text-gray-600 block"> <span
+						class="inline-flex justify-center items-center px-2 rounded-full bg-green-500 text-white">이름</span>
+						<span>${member.name}</span>
+					</a> <a href="${detailUrl}" class="mt-2 text-gray-600 block"> <span
+						class="inline-flex justify-center items-center px-2 rounded-full bg-green-500 text-white">로그인
+							아이디</span> <span>${member.nickname}</span>
+					</a>
 				</div>
+
+				<!-- 아이콘 section -->
 				<div class="flex items-center mt-4">
-					<a href="detail?id=${article.id}"
-						class="text-blue-500 hover:underline">자세히 보기</a>
-					<a href="modify?id=${article.id}"
-						class="ml-2 text-blue-500 hover:underline">수정</a>
-					<a onclick="if ( !confirm('삭제하시겠습니까?') ) return false;" href="doDelete?id=${article.id}"
-						class="ml-2 text-blue-500 hover:underline">삭제</a>
+					<a href="detail?id=${member.id}"
+						class="text-blue-500 hover:underline" title="자세히 보기"> <span>
+							<i class="fas fa-info"></i> <span class="hidden sm:inline">자세히
+								보기</span>
+					</span>
+					</a> <a href="modify?id=${member.id}"
+						class="ml-2 text-blue-500 hover:underline"> <span> <i
+							class="fas fa-edit"></i> <span class="hidden sm:inline">수정</span>
+					</span>
+					</a> <a onclick="if ( !confirm('삭제하시겠습니까?') ) return false;"
+						href="doDelete?id=${member.id}"
+						class="ml-2 text-blue-500 hover:underline"> <span> <i
+							class="fas fa-trash"></i> <span class="hidden sm:inline">삭제</span>
+					</span>
+					</a>
 					<div class="flex-grow"></div>
 					<div>
-						<a class="flex items-center">
-							<img
-								src="https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=731&amp;q=80"
-								alt="avatar" class="mx-4 w-10 h-10 object-cover rounded-full">
-							<h1 class="text-gray-700 font-bold hover:underline">${article.extra__writer}</h1>
+						<a class="flex items-center"> <img
+							src="https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=crop&amp;w=731&amp;q=80"
+							alt="avatar" class="mx-4 w-10 h-10 object-cover rounded-full">
+							<h1 class="text-gray-700 font-bold hover:underline">${member.nickname}</h1>
 						</a>
 					</div>
 				</div>

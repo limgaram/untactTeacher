@@ -13,34 +13,35 @@
 	</select>
 
 	<select id="getForPrintMembers" resultType="Member">
-		SELECT A.*,
-		IFNULL(M.nickname, "탈퇴회원") AS extra__writer,
-		B.name AS
-		extra__boardName
-		FROM article AS A
-		LEFT JOIN `member` AS M
-		ON A.memberId
-		= M.id
-		LEFT JOIN `board` AS B
-		ON A.boardId = B.id
+		SELECT M.*
+		FROM `member` AS M
 		WHERE 1
-		<if test="boardId != null">
-			AND A.boardId = #{boardId}
+		<if test="searchKeywordType == `name`">
+			And M.name LIKE CONCAT('%", #{searchKeyword}, '%')
 		</if>
-		<if test="searchKeywordType == 'title'">
-			AND A.title LIKE CONCAT('%', #{searchKeyword}, '%')
+		<if test="searchKeywordType == `nickname`">
+			And M.`nickname` LIKE CONCAT('%", #{searchKeyword}, '%')
 		</if>
-		<if test="searchKeywordType == 'body'">
-			AND A.`body` LIKE CONCAT('%', #{searchKeyword}, '%')
+		<if test="searchKeywordType == `nameAndNickname`">
+			And (M.name LIKE CONCAT('%", #{searchKeyword}, '%') OR
+			M.nickname LIKE CONCAT('%", #{searchKeyword}, '%'))
 		</if>
-		<if test="searchKeywordType == 'titleAndBody'">
-			AND (A.title LIKE CONCAT('%', #{searchKeyword}, '%') OR
-			A.`body` LIKE CONCAT('%', #{searchKeyword}, '%'))
+		<if test="searchKeywordType == `loginId`">
+			And M.loginId LIKE CONCAT('%", #{searchKeyword}, '%')
 		</if>
-		ORDER BY A.id DESC
+		<if test="authLevel != null and authLevel != ''">
+			AND M.authLevel = #{authLevel}
+		</if>
+		ORDER BY M.id DESC
 		<if test="limitStart != null and limitTake != null">
 			LIMIT #{limitStart}, #{limitTake}
 		</if>
+	</select>
+	
+	<select id="getForPrintMember" resultType="Member">
+		SELECT *
+		FROM `member`
+		WHERE id = #{id}
 	</select>
 
 	<insert id="join" useGeneratedKeys="true" keyProperty="id">

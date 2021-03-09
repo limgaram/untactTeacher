@@ -109,6 +109,23 @@ public class AdmMemberController extends BaseController {
 		return Util.msgAndReplace(msg, redirectUrl);
 	}
 
+	@RequestMapping("adm/member/modify")
+	public String showModify(Integer id, HttpServletRequest req) {
+		if (id == null) {
+			return msgAndBack(req, "id를 입력해주세요.");
+		}
+
+		Member member = memberService.getForPrintMember(id);
+
+		req.setAttribute("member", member);
+
+		if (member == null) {
+			return msgAndBack(req, "존재하지 않는 회원번호입니다.");
+		}
+
+		return "adm/member/modify";
+	}
+
 	@RequestMapping("/adm/member/doModify")
 	@ResponseBody
 	public ResultData doModify(@RequestParam Map<String, Object> param, HttpServletRequest req) {
@@ -132,15 +149,8 @@ public class AdmMemberController extends BaseController {
 
 	@RequestMapping("/adm/member/list")
 	public String showList(HttpServletRequest req, @RequestParam(defaultValue = "1") int boardId,
-			String searchKeywordType, String searchKeyword, @RequestParam(defaultValue = "1") int page) {
-
-		Board board = memberService.getBoard(boardId);
-
-		req.setAttribute("board", board);
-
-		if (board == null) {
-			return msgAndBack(req, "존재하지 않는 게시판 입니다.");
-		}
+			String searchKeywordType, String searchKeyword, @RequestParam(defaultValue = "1") int page,
+			@RequestParam Map<String, Object> param) {
 
 		if (searchKeywordType != null) {
 			searchKeywordType = searchKeywordType.trim();
@@ -164,8 +174,8 @@ public class AdmMemberController extends BaseController {
 
 		int itemsInAPage = 20;
 
-		List<Member> members = memberService.getForPrintMembers(boardId, searchKeywordType, searchKeyword, page,
-				itemsInAPage);
+		List<Member> members = memberService.getForPrintMembers(searchKeywordType, searchKeyword, page, itemsInAPage,
+				param);
 
 		req.setAttribute("members", members);
 

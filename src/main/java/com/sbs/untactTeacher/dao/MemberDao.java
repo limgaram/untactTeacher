@@ -23,7 +23,7 @@ public interface MemberDao {
 
 	Board getBoard(@Param("id") int id);
 
-	List<Member> getForPrintMembers(@Param("boardId") int boardId, @Param("searchKeywordType") String searchKeywordType,
-			@Param("searchKeyword") String searchKeyword, @Param("limitStart") int limitStart,
-			@Param("limitTake") int limitTake);
+	List<Member> getForPrintMembers(Map<String, Object> param);
+
+	Member getForPrintMember(@Param("id") int id);
 }

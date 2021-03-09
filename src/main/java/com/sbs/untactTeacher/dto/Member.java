@@ -1,6 +1,7 @@
 package com.sbs.untactTeacher.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sbs.untactTeacher.service.MemberService;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,4 +24,12 @@ public class Member {
 	private String nickname;
 	private String cellphoneNo;
 	private String email;
+
+	public String getAuthLevelName() {
+		return MemberService.getAuthLevelName(this);
+	}
+
+	public String getAuthLevelNameColor() {
+		return MemberService.getAuthLevelNameColor(this);
+	}
 }
