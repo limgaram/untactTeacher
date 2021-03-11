@@ -264,6 +264,7 @@ public class Util {
 		}
 
 		for (int i = 0; i < str.length(); i++) {
+			//이 문장을 구성하고 있는 첫번째가 숫자이면 true return.
 			if (Character.isDigit(str.charAt(i)) == false) {
 				return false;
 			}
