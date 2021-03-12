@@ -39,7 +39,7 @@ public class AdmMemberController extends BaseController {
 		}
 
 		if (loginId.length() < 5) {
-			return new ResultData("F-5", "로그인아이디는 5자 이상으로 입력해주세요.");
+			return new ResultData("F-6", "로그인아이디는 5자 이상으로 입력해주세요.");
 		}
 
 		if (loginId.length() > 20) {

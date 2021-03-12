@@ -45,7 +45,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		// beforeActionInterceptor 인터셉터가 모든 액션 실행전에 실행되도록 처리
-		registry.addInterceptor(beforeActionInterceptor).addPathPatterns("/**").excludePathPatterns("/resource/**")
+		registry.addInterceptor(beforeActionInterceptor)
+				.addPathPatterns("/**")
+				.excludePathPatterns("/resource/**")
 				.excludePathPatterns("/gen/**");
 
 		// 어드민 필요
@@ -57,31 +59,50 @@ public class WebMvcConfig implements WebMvcConfigurer {
 				.excludePathPatterns("/adm/member/doJoin")
 				.excludePathPatterns("/adm/member/getLoginIdDup");
 		
-
 		// 로그인 필요
-		registry.addInterceptor(needLoginInterceptor).addPathPatterns("/**").excludePathPatterns("/")
-				.excludePathPatterns("/swagger-ui/**").excludePathPatterns("/swagger-resources/**")
-				.excludePathPatterns("/v2/api-docs").excludePathPatterns("/webjars/**").excludePathPatterns("/adm/**")
-				.excludePathPatterns("/gen/**").excludePathPatterns("/resource/**").excludePathPatterns("/usr/home/**")
-				.excludePathPatterns("/usr/member/authKey").excludePathPatterns("/usr/member/login")
-				.excludePathPatterns("/usr/member/doLogin").excludePathPatterns("/usr/member/join")
-				.excludePathPatterns("/usr/member/doJoin").excludePathPatterns("/usr/article/list")
-				.excludePathPatterns("/usr/article/detail").excludePathPatterns("/usr/reply/list")
-				.excludePathPatterns("/usr/member/findLoginId").excludePathPatterns("/usr/member/doFindLoginId")
-				.excludePathPatterns("/usr/member/findLoginPw").excludePathPatterns("/usr/member/doFindLoginPw")
-				.excludePathPatterns("/common/**").excludePathPatterns("/usr/file/test*")
-				.excludePathPatterns("/usr/file/doTest*").excludePathPatterns("/test/**").excludePathPatterns("/error");
+		registry.addInterceptor(needLoginInterceptor)
+				.addPathPatterns("/**")
+				.excludePathPatterns("/")
+				.excludePathPatterns("/swagger-ui/**")
+				.excludePathPatterns("/swagger-resources/**")
+				.excludePathPatterns("/v2/api-docs")
+				.excludePathPatterns("/webjars/**")
+				.excludePathPatterns("/adm/**")
+				.excludePathPatterns("/gen/**")
+				.excludePathPatterns("/resource/**")
+				.excludePathPatterns("/usr/home/**")
+				.excludePathPatterns("/usr/member/authKey")
+				.excludePathPatterns("/usr/member/login")
+				.excludePathPatterns("/usr/member/doLogin")
+				.excludePathPatterns("/usr/member/join")
+				.excludePathPatterns("/usr/member/doJoin")
+				.excludePathPatterns("/usr/article/list")
+				.excludePathPatterns("/usr/article/detail")
+				.excludePathPatterns("/usr/reply/list")
+				.excludePathPatterns("/usr/member/findLoginId")
+				.excludePathPatterns("/usr/member/doFindLoginId")
+				.excludePathPatterns("/usr/member/findLoginPw")
+				.excludePathPatterns("/usr/member/doFindLoginPw")
+				.excludePathPatterns("/common/**")
+				.excludePathPatterns("/usr/file/test*")
+				.excludePathPatterns("/usr/file/doTest*")
+				.excludePathPatterns("/test/**")
+				.excludePathPatterns("/error");
 
 		// 로그인 상태에서 접속할 수 없는 URI 전부 기술
-		registry.addInterceptor(needLogoutInterceptor).addPathPatterns("/adm/member/login")
-				.addPathPatterns("/adm/member/doLogin").addPathPatterns("/usr/member/login")
-				.addPathPatterns("/usr/member/doLogin").addPathPatterns("/usr/member/join")
+		registry.addInterceptor(needLogoutInterceptor)
+				.addPathPatterns("/adm/member/login")
+				.addPathPatterns("/adm/member/doLogin")
+				.addPathPatterns("/usr/member/login")
+				.addPathPatterns("/usr/member/doLogin")
+				.addPathPatterns("/usr/member/join")
 				.addPathPatterns("/usr/member/doJoin");
 	}
 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		registry.addResourceHandler("/gen/**").addResourceLocations("file:///" + genFileDirPath + "/")
+		registry.addResourceHandler("/gen/**")
+				.addResourceLocations("file:///" + genFileDirPath + "/")
 				.setCachePeriod(20);
 	}
 }
