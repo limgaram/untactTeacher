@@ -113,4 +113,8 @@ public class ArticleService {
 		return new ResultData("S-1", "성공하였습니다.", "id", id);
 	}
 
+	public int getArticleTotalCount(int boardId, String searchKeywordType, String searchKeyword) {
+		return articleDao.getArticlesTotalCount(boardId, searchKeywordType, searchKeyword);
+	}
+
 }
