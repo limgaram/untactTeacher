@@ -1,6 +1,7 @@
 package com.sbs.untactTeacher.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -17,5 +18,7 @@ public interface BoardDao {
 	Board getBoard(@Param("id") int id);
 
 	void deleteBoard(@Param("id") int id);
+
+	void modifyBoard(Map<String, Object> param);
 
 }

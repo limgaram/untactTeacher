@@ -24,10 +24,25 @@
 	</select>
 
 	<delete id="deleteBoard">
-		DELETE FROM article
+		DELETE FROM board
 		WHERE id = #{id}
 	</delete>
 
+	<update id="modifyBoard">
+		UPDATE board
+		<set>
+			<if test="title != null or body != null">
+				updateDAte = NOW(),
+			</if>
+			<if test="title != null">
+				title = #{title},
+			</if>
+			<if test="body != null">
+				`body` = #{body},
+			</if>
+		</set>
+		WHERE id = #{id}
+	</update>
 </mapper>
 
 
