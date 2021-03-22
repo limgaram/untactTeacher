@@ -264,7 +264,7 @@ public class Util {
 		}
 
 		for (int i = 0; i < str.length(); i++) {
-			//이 문장을 구성하고 있는 첫번째가 숫자이면 true return.
+			// 이 문장을 구성하고 있는 첫번째가 숫자이면 true return.
 			if (Character.isDigit(str.charAt(i)) == false) {
 				return false;
 			}
@@ -301,4 +301,49 @@ public class Util {
 		// _, 알파벳, 숫자로만 구성
 		return Pattern.matches("^[a-zA-Z]{1}[a-zA-Z0-9_]{4,19}$", str);
 	}
+
+	public static String getNewUrlRemoved(String url, String paramName) {
+		String deleteStrStarts = paramName + "=";
+		int delStartPos = url.indexOf(deleteStrStarts);
+
+		if (delStartPos != -1) {
+			int delEndPos = url.indexOf("&", delStartPos);
+
+			if (delEndPos != -1) {
+				delEndPos++;
+				url = url.substring(0, delStartPos) + url.substring(delEndPos, url.length());
+			} else {
+				url = url.substring(0, delStartPos);
+			}
+		}
+
+		if (url.charAt(url.length() - 1) == '?') {
+			url = url.substring(0, url.length() - 1);
+		}
+
+		if (url.charAt(url.length() - 1) == '&') {
+			url = url.substring(0, url.length() - 1);
+		}
+
+		return url;
+	}
+
+	public static String getNewUrl(String url, String paramName, String paramValue) {
+		url = getNewUrlRemoved(url, paramName);
+
+		if (url.contains("?")) {
+			url += "&" + paramName + "=" + paramValue;
+		} else {
+			url += "?" + paramName + "=" + paramValue;
+		}
+
+		url = url.replace("?&", "?");
+
+		return url;
+	}
+
+	public static String getNewUrlAndEncoded(String url, String paramName, String paramValue) {
+		return getUrlEncoded(getNewUrl(url, paramName, paramValue));
+	}
+
 }
