@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page import="com.sbs.untactTeacher.util.Util"%>
 
@@ -8,82 +7,109 @@
 <!-- memberModify -->
 
 <script>
-	MemberModify__submited = false;
-	function MemberModify__checkAndSubmit(form) {
-		if (MemberModify__submited) {
-			alert('처리중입니다.');
-			return;
-		}
+    MemberModify__submited = false;
+    function MemberModify__checkAndSubmit(form) {
+        if (MemberModify__submited) {
+            alert('처리중입니다.');
+            return;
+        }
 
-		if (MemeberModify__submited) {
-			return;
-		}
+        if (MemeberModify__submited) {
+            return;
+        }
 
-		if (form.loginPw.value) {
-			form.loginPw.value = form.loginPw.value.trim();
+        if (form.loginPw.value) {
+            form.loginPw.value = form.loginPw.value.trim();
 
-			if (form.loginPw.value.length == 0) {
-				alert('로그인 비밀번호를 입력해주세요. ');
-				form.loginPw.focus();
+            if (form.loginPw.value.length == 0) {
+                alert('로그인 비밀번호를 입력해주세요. ');
+                form.loginPw.focus();
 
-				return;
-			}
+                return;
+            }
 
-			if (form.loginPwConfirm.value.length == 0) {
-				alert('로그인 비밀번호 확인을 입력해주세요.');
+            if (form.loginPwConfirm.value.length == 0) {
+                alert('로그인 비밀번호 확인을 입력해주세요.');
 
-				return;
-			}
+                return;
+            }
 
-			if (form.loginPw.value != form.loginPwConfirm.value) {
-				alert('로그인 비밀번호가 일치하지 않습니다. ');
+            if (form.loginPw.value != form.loginPwConfirm.value) {
+                alert('로그인 비밀번호가 일치하지 않습니다. ');
 
-				return;
-			}
-		}
+                return;
+            }
+        }
 
-		form.name.value = form.name.value.trim();
+        form.name.value = form.name.value.trim();
 
-		if (form.name.value.length == 0) {
-			alert('이름을 입력해주세요. ');
-			form.name.focus();
+        if (form.name.value.length == 0) {
+            alert('이름을 입력해주세요. ');
+            form.name.focus();
 
-			return;
-		}
+            return;
+        }
 
-		form.nickname.value = form.nickname.value.trim();
+        form.nickname.value = form.nickname.value.trim();
 
-		if (form.nickname.value.length == 0) {
-			alert('닉네임을 입력해주세요. ')
-			form.nickname.focus();
+        if (form.nickname.value.length == 0) {
+            alert('닉네임을 입력해주세요. ')
+            form.nickname.focus();
 
-			return;
-		}
+            return;
+        }
 
-		form.email.value = form.email.value.trim();
+        form.email.value = form.email.value.trim();
 
-		if (form.email.value.length == 0) {
-			alert('이메일을 입력해주세요.');
-			form.email.focus();
-			return;
-		}
+        if (form.email.value.length == 0) {
+            alert('이메일을 입력해주세요.');
+            form.email.focus();
+            return;
+        }
 
-		form.cellphoneNo.value = form.cellphoneNo.value.trim();
-		if (form.cellphoneNo.value.length == 0) {
-			alert('휴대전화번호를 입력해주세요.');
-			form.cellphoneNo.focus();
-			return;
-		}
+        form.cellphoneNo.value = form.cellphoneNo.value.trim();
+        if (form.cellphoneNo.value.length == 0) {
+            alert('휴대전화번호를 입력해주세요.');
+            form.cellphoneNo.focus();
+            return;
+        }
 
-		form.submit();
-		MemberModify__submited = true;
-	}
+        function startUpload(onSuccess) {
+            if (!form["file__member__" + param.id + "__common__attachment__1"].value) {
+                onSuccess();
+                return;
+            }
+
+            const formData = new FormData(form);
+
+            $.ajax({
+                url : '/common/genFile/doUpload',
+                data : fileUploadFormData,
+                processData : false,
+                contentType : false,
+                dataType : "json",
+                type : 'POST',
+                success : onSuccess
+            });
+        }
+
+        const submitForm = function(data) {
+            if (data) {
+                form.genFileIdsStr.value = data.body.genFileIdsStr;
+            }
+
+            form.submit();
+            MemberModify__submited = true;
+        }
+
+        startUpload(submitForm);
+    }
 </script>
 
 <section class="section-1">
 	<div class="bg-white shadow-md rounded container mx-auto p-8 mt-8">
-		<form onsubmit="MemberModify__checkAndSubmit(this); return false;"
-			action="doModify" method="POST">
+		<form onsubmit="MemberModify__checkAndSubmit(this); return false;" action="doModify" method="POST">
+			<input type="hidden" name="genFileIdsStr" /> 
 			<input type="hidden" name="id" value="${member.id}" />
 
 			<div class="form-row flex flex-col lg:flex-row">
@@ -98,9 +124,7 @@
 					<span>로그인비번</span>
 				</div>
 				<div class="lg:flex-grow">
-					<input type="password" name="loginPW" autofocus="autofocus"
-						class="form-row-input w-full rounded-sm"
-						placeholder="로그인비밀번호를 입력해주세요.">
+					<input type="password" name="loginPW" autofocus="autofocus" class="form-row-input w-full rounded-sm" placeholder="로그인비밀번호를 입력해주세요.">
 				</div>
 			</div>
 
@@ -109,20 +133,29 @@
 					<span>로그인비번 확인</span>
 				</div>
 				<div class="lg:flex-grow">
-					<input type="password" name="loginPWConfirm" autofocus="autofocus"
-						class="form-row-input w-full rounded-sm"
-						placeholder="로그인비밀번호확인을 입력해주세요.">
+					<input type="password" name="loginPWConfirm" autofocus="autofocus" class="form-row-input w-full rounded-sm" placeholder="로그인비밀번호확인을 입력해주세요.">
 				</div>
 			</div>
 
 			<div class="form-row flex flex-col lg:flex-row">
 				<div class="lg:flex lg:items-center lg:w-28">
+					<span>프로필이미지</span>
+				</div>
+				<div class="lg:flex-grow">
+					<input accept="image/gif, image/jpeg, image/png"
+						class="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
+						autofocus="autofocus" type="file" placeholder="프로필이미지를 선택해주세요."
+						name="file__member__${member.id}__common__attachment__1" maxlength="20" />
+					<c:set var="fileNo" value="${String.valueOf(1)}" />
+					${member.extra.file__common__attachment[fileNo].mediaHtml}
+				</div>
+			</div>
+			<div class="form-row flex flex-col lg:flex-row">
+				<div class="lg:flex lg:items-center lg:w-28">
 					<span>이름</span>
 				</div>
 				<div class="lg:flex-grow">
-					<input value="${member.name}" type="text" name="name"
-						autofocus="autofocus" class="form-row-input w-full rounded-sm"
-						placeholder="이름을 입력해주세요.">
+					<input value="${member.name}" type="text" name="name" autofocus="autofocus" class="form-row-input w-full rounded-sm" placeholder="이름을 입력해주세요.">
 				</div>
 			</div>
 
@@ -131,9 +164,7 @@
 					<span>닉네임</span>
 				</div>
 				<div class="lg:flex-grow">
-					<input value="${member.nickname}" type="text" name="nickname"
-						autofocus="autofocus" class="form-row-input w-full rounded-sm"
-						placeholder="닉네임을 입력해주세요.">
+					<input value="${member.nickname}" type="text" name="nickname" autofocus="autofocus" class="form-row-input w-full rounded-sm" placeholder="닉네임을 입력해주세요.">
 				</div>
 			</div>
 
@@ -142,9 +173,7 @@
 					<span>이메일</span>
 				</div>
 				<div class="lg:flex-grow">
-					<input value="${member.email}" type="email" name="email"
-						autofocus="autofocus" class="form-row-input w-full rounded-sm"
-						placeholder="이메일을 입력해주세요.">
+					<input value="${member.email}" type="email" name="email" autofocus="autofocus" class="form-row-input w-full rounded-sm" placeholder="이메일을 입력해주세요.">
 				</div>
 			</div>
 
@@ -153,10 +182,7 @@
 					<span>전화번호</span>
 				</div>
 				<div class="lg:flex-grow">
-					<input value="${member.cellphoneNo}" type="cellphoneNo"
-						name="cellphoneNo" autofocus="autofocus"
-						class="form-row-input w-full rounded-sm"
-						placeholder="전화번호를 입력해주세요.">
+					<input value="${member.cellphoneNo}" type="cellphoneNo" name="cellphoneNo" autofocus="autofocus" class="form-row-input w-full rounded-sm" placeholder="전화번호를 입력해주세요.">
 				</div>
 			</div>
 
@@ -170,11 +196,11 @@
 						<option value="7">관리자</option>
 					</select>
 					<script>
-						const memberAuthLevel = parseInt("${member.authLevel}");
-					</script>
+                        const memberAuthLevel = parseInt("${member.authLevel}");
+                    </script>
 					<script>
-						$('.section-1 .select-auth-level').val(memberAuthLevel);
-					</script>
+                        $('.section-1 .select-auth-level').val(memberAuthLevel);
+                    </script>
 				</div>
 			</div>
 
@@ -184,11 +210,8 @@
 				</div>
 				<div class="lg:flex-grow">
 					<div class="btns">
-						<input type="submit"
-							class="btn-primary bg-blue-500 hover:bg-blue-dark text-white font-bold py-2 px-4 rounded"
-							value="수정" /> <input onclick="history.back();" type="button"
-							class="btn-info bg-red-500 hover:bg-red-dark text-white font-bold py-2 px-4 rounded"
-							value="최소" />
+						<input type="submit" class="btn-primary bg-blue-500 hover:bg-blue-dark text-white font-bold py-2 px-4 rounded" value="수정" /> 
+						<input onclick="history.back();" type="button" class="btn-info bg-red-500 hover:bg-red-dark text-white font-bold py-2 px-4 rounded" value="최소" />
 
 					</div>
 				</div>

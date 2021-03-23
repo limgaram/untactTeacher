@@ -1,5 +1,7 @@
 package com.sbs.untactTeacher.dto;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sbs.untactTeacher.service.MemberService;
 
@@ -10,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Member {
+public class Member extends EntityDto {
 	private int id;
 	private String regDate;
 	private String updateDate;
@@ -33,4 +35,5 @@ public class Member {
 	public String getAuthLevelNameColor() {
 		return MemberService.getAuthLevelNameColor(this);
 	}
+
 }

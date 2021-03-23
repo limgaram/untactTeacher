@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Article {
+public class Article extends EntityDto{
 	private int id;
 	private String regDate;
 	private String updateDate;
@@ -24,14 +24,6 @@ public class Article {
 	private String extra__thumbImg;
 
 	private Map<String, Object> extra;
-
-	public Map<String, Object> getExtraNotNull() {
-		if (extra == null) {
-			extra = new HashMap<String, Object>();
-		}
-
-		return extra;
-	}
 
 	public String getWriterThumbImgUrl() {
 		return "/common/genFile/file/member/" + memberId + "/common/attachment/1";
